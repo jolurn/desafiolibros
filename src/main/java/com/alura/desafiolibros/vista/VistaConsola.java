@@ -127,18 +127,31 @@ public class VistaConsola {
         }
     }
 
+    private void listarLibrosRegistrado() {
+        System.out.println("\n=== CATÁLOGO COMPLETO ===");
 
-    private void listarLibrosRegistrado(){
-        List<Libro> libros = repositorio.findAll();
+        List<Libro> libros = repositorio.findAllWithAuthors();
 
         libros.stream()
-                .sorted(Comparator.comparing(Libro::getLanguages))
-                .forEach(System.out::println);
+                .sorted(Comparator.comparing(Libro::getLanguages)
+                        .thenComparing(Libro::getTitle))
+                .forEach(libro -> {
+                    System.out.println("\n▂▂▂▂▂▂▂▂ LIBRO ▂▂▂▂▂▂▂▂");
+                    System.out.println("  📖 " + libro.getTitle());
+                    System.out.println("  🌐 " + libro.getLanguages().getNombreEspanol());
+                    System.out.println("  ⬇ " + libro.getDownload_count() + " descargas");
+                    System.out.println("  ✍ Autores: " +
+                            libro.getAuthors().stream()
+                                    .map(Autor::getName)
+                                    .collect(Collectors.joining(", ")));
+                });
+
+        System.out.println("\nTotal: " + libros.size() + " libros registrados");
     }
 
     private void listarAutoresRegistrado() {
 
-        List<Libro> libros = repositorio.findAllWithAuthors(); // Usa JOIN FETCH como antes
+        List<Libro> libros = repositorio.findAllWithAuthors();
 
         Map<Autor, List<Libro>> autoresConLibros = libros.stream()
                 .flatMap(libro -> libro.getAuthors().stream()
@@ -164,44 +177,46 @@ public class VistaConsola {
     }
 
     private void listarAutoresVivosEnAnio() {
-        System.out.println("Ingrese el año vivo de autor(es) que desee buscar:");
-        int anio = teclado.nextInt();
-        teclado.nextLine();
+        try {
+            System.out.println("\nIngrese el año (ej: 1980):");
+            int anio = teclado.nextInt();
+            teclado.nextLine();
 
-        List<Libro> libros = repositorio.findAllWithAuthors();
+            if (anio <= 0) throw new IllegalArgumentException();
 
-        Set<Autor> autoresVivos = libros.stream()
-                .flatMap(libro -> libro.getAuthors().stream())
-                .filter(autor -> estaVivoEnAnio(autor, anio))
-                .collect(Collectors.toSet());
+            List<Libro> libros = repositorio.findLibrosConAutoresVivosEnAnio(anio);
 
-        if (autoresVivos.isEmpty()) {
-            System.out.println("No hay autores vivos en el año " + anio);
-        } else {
-            System.out.println("=== AUTORES VIVOS EN " + anio + " ===");
-            autoresVivos.forEach(autor -> {
-                System.out.println("\n▂▂▂▂▂▂▂▂ AUTOR ▂▂▂▂▂▂▂▂");
-                System.out.println("  ✍ " + autor.getName());
-                System.out.println("  🎂 Nacimiento: " + autor.getBirth_year());
-                System.out.println("  ✟ Fallecimiento: " + autor.getDeath_year());
+            Set<Autor> autoresVivos = libros.stream()
+                    .flatMap(libro -> libro.getAuthors().stream())
+                    .collect(Collectors.toSet());
 
-                System.out.println("  📚 Libros:");
-                libros.stream()
-                        .filter(libro -> libro.getAuthors().contains(autor))
-                        .forEach(libro -> System.out.println("    - " + libro.getTitle()));
-            });
+            if (autoresVivos.isEmpty()) {
+                System.out.println("No hay autores vivos en " + anio);
+            } else {
+                System.out.println("\n=== AUTORES VIVOS EN " + anio + " ===");
+                autoresVivos.forEach(autor -> {
+                    System.out.println("\n▂▂▂▂▂▂▂▂ AUTOR ▂▂▂▂▂▂▂▂");
+                    System.out.println("  ✍ " + autor.getName());
+                    System.out.println("  🎂 " + autor.getBirth_year());
+                    System.out.println("  ✟ " + autor.getDeath_year());
+
+                    System.out.println("  📚 Libros:");
+                    libros.stream()
+                            .filter(libro -> libro.getAuthors().contains(autor))
+                            .forEach(libro -> System.out.println("    - " + libro.getTitle()));
+                });
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Año inválido. Ingrese un número positivo.");
+            teclado.nextLine();
         }
-    }
-
-    private boolean estaVivoEnAnio(Autor autor, int anio) {
-        return anio >= autor.getBirth_year() &&
-                (autor.getDeath_year() == null || anio <= autor.getDeath_year());
     }
 
     private void listarLibrosPorIdioma() {
 
         System.out.println("""
-        Ingrese el código del idioma para buscar libros:
+        \n=== ESTADÍSTICAS POR IDIOMA ===
+        Ingrese el código del idioma:
         en - English
         es - Español
         fr - Français
@@ -210,27 +225,38 @@ public class VistaConsola {
         String codigoIdioma = teclado.nextLine().trim().toLowerCase();
 
         try {
-
             Lenguajes lenguaje = Lenguajes.fromString(codigoIdioma);
 
-            List<Libro> libros = repositorio.findAll().stream()
-                    .filter(libro -> libro.getLanguages() == lenguaje)
-                    .sorted(Comparator.comparing(Libro::getTitle))
-                    .toList();
+            List<Libro> libros = repositorio.findByLanguages(lenguaje);
+
+            long totalLibros = libros.size();
+            long totalDescargas = libros.stream()
+                    .mapToLong(Libro::getDownload_count)
+                    .sum();
+            double promedioDescargas = totalLibros > 0 ?
+                    (double) totalDescargas / totalLibros : 0;
 
             if (libros.isEmpty()) {
-                System.out.println("\nNo hay libros en " + lenguaje.name());
+                System.out.printf("\nNo hay libros en %s (%s)\n",
+                        lenguaje.getNombreEspanol(), codigoIdioma);
             } else {
-                System.out.println("\n=== LIBROS EN " + lenguaje.name() + " ===");
-                libros.forEach(libro ->
-                        System.out.printf("- %s (%d descargas)%n",
+                System.out.printf("\n=== ESTADÍSTICAS %s (%d libros) ===",
+                        lenguaje.name(), totalLibros);
+                System.out.printf("\n📊 Total descargas: %,d", totalDescargas);
+                System.out.printf("\n📈 Promedio descargas: %,.1f\n", promedioDescargas);
+
+                libros.stream()
+                        .sorted(Comparator.comparing(Libro::getDownload_count).reversed())
+                        .limit(3)
+                        .forEach(libro -> System.out.printf(
+                                "\n⭐ %s (%,d descargas)",
                                 libro.getTitle(),
                                 libro.getDownload_count())
-                );
+                        );
             }
 
         } catch (IllegalArgumentException e) {
-            System.out.println("\n❌ Error: Código de idioma no válido. Use: en, es o fr");
+            System.out.println("\n❌ Error: Código no válido. Use en, es o fr");
         }
     }
 

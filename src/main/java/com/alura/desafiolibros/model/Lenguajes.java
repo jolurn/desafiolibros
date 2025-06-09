@@ -31,13 +31,13 @@ public enum Lenguajes {
         throw new IllegalArgumentException("Ningun lenguaje encontrado: " + text);
     }
 
-    public static Lenguajes fromESPANOL(String text) {
-        for (Lenguajes lenguaje : Lenguajes.values()) {
-            if (lenguaje.lenguagesEspanol.equalsIgnoreCase(text)) {
-                return lenguaje;
-            }
-        }
-        throw new IllegalArgumentException("Ningun lenguaje encontrado: " + text);
+    public String getNombreEspanol() {
+        return switch (this) {
+            case ENGLISH -> "inglés";
+            case SPANISH -> "español";
+            case FRENCH -> "francés";
+            case UNKNOWN -> "desconocido";
+        };
     }
 
 }
