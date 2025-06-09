@@ -31,103 +31,43 @@ graph TD
 - Persistencia en base de datos (H2/MySQL)
 
 - Consultas avanzadas:
-@Query("SELECT l FROM Libro l JOIN l.authors a WHERE a.birth_year <= :anio")
-List<Libro> findLibrosAutoresVivos(@Param("anio") int anio);
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/confecciones-5368b.appspot.com/o/Captura%20de%20pantalla%202025-06-08%20223806.jpg?alt=media&token=f6a8de12-6164-421f-8176-ba08ef75c555"/>
+</p>
 
 Estadísticas por idioma
 
 🛠️ Configuración Técnica
 Estructura del Proyecto
-src/
-├── main/
-│   ├── java/
-│   │   └── com.alura.desafiolibros/
-│   │       ├── model/
-│   │       ├── repository/
-│   │       ├── service/
-│   │       └── DesafioApplication.java
-├── resources/
-│   ├── application.properties
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/confecciones-5368b.appspot.com/o/Captura%20de%20pantalla%202025-06-08%20223920.jpg?alt=media&token=8bb6fc7b-81b4-4031-ab87-3912a6e873df"/>
+</p>
 
 Tecnologías Clave
-Tecnología	Uso
-Spring Data JPA	Derived queries
-Jackson	Parseo JSON API
-H2 Database	Almacenamiento local
-Maven	Gestión de dependencias
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/confecciones-5368b.appspot.com/o/Captura%20de%20pantalla%202025-06-08%20224029.jpg?alt=media&token=0951c49d-f441-4625-9702-005fec83d72e"/>
+</p>
 📊 Diagrama de Clases
 
-classDiagram
-    class Libro {
-        +String title
-        +Lenguajes language
-        +Set<Autor> authors
-    }
-    
-    class Autor {
-        +String name
-        +Integer birth_year
-    }
-    
-    Libro "1" *-- "n" Autor
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/confecciones-5368b.appspot.com/o/Captura%20de%20pantalla%202025-06-08%20224029.jpg?alt=media&token=0951c49d-f441-4625-9702-005fec83d72e"/>
+</p>
 
 🖥️ Cómo Ejecutar
 1. Requisitos:
-Java 17+
-Maven 3.8+
+- Java 17+
+- Maven 3.8+
 
 2. Instalación:
-git clone https://github.com/tu-usuario/catalogo-libros.git
-cd catalogo-libros
-mvn spring-boot:run
+- git clone https://github.com/jolurn/desafiolibros.git
+- cd desafiolibros
+- mvn spring-boot:run
 
 🌟 Ejemplo de Uso
-=== MENÚ PRINCIPAL ===
-1 - Buscar libro
-2 - Listar libros
-3 - Filtrar por idioma
-4 - Autores vivos en año
-> 1
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/confecciones-5368b.appspot.com/o/Captura%20de%20pantalla%202025-06-08%20224707.jpg?alt=media&token=67f71d97-4f3a-4794-aa2b-bb6ba936e944"/>
+</p>
 
-Ingrese título: Dracula
-✅ Libro registrado: Dracula (30,184 descargas)
-
-📝 Documentación Adicional
-Para la documentación completa con Docusaurus:
-
-1. Instala dependencias:
-npm install @docusaurus/core@latest
-
-2. Crea la estructura:
-npx create-docusaurus@latest docs classic
-
-3. Añade páginas técnicas en docs/:
----
-title: Arquitectura
----
-## Diseño del Sistema
-
-🔍 ¿Por qué Docusaurus?
-Documentación interactiva: Soporta diagramas Mermaid y componentes React
-
-SEO Optimizado: Genera metadata automáticamente
-
-Versionado: Mantén documentación para cada versión del proyecto
-
-Ejemplo de configuración en docusaurus.config.js:
-module.exports = {
-  presets: [
-    [
-      '@docusaurus/preset-classic',
-      {
-        docs: {
-          routeBasePath: '/',
-          sidebarPath: require.resolve('./sidebars.js'),
-        },
-      },
-    ],
-  ],
-};
 
 
 
