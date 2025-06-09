@@ -2,7 +2,7 @@
   <img src="https://firebasestorage.googleapis.com/v0/b/confecciones-5368b.appspot.com/o/Captura%20de%20pantalla%202025-06-08%20223121.jpg?alt=media&token=6456906d-7b34-45ba-895b-16863fe1307b"/>
 </p>
 
-<h1 align="center">Literalura width="30px" src="https://raw.githubusercontent.com/iampavangandhi/iampavangandhi/master/gifs/Hi.gif"></h1>
+<h1 align="center">Literalura</h1>
 ---
 sidebar_position: 1
 title: Catálogo de Libros - API Gutendex
@@ -19,7 +19,6 @@ Aplicación de consola para búsqueda y gestión de libros usando la API [Gutend
 
 ## 🚀 Funcionalidades Clave
 
-```mermaid
 graph TD
     A[Búsqueda API] -->|Gutendex| B(Registro en BD)
     B --> C[Listado Completo]
